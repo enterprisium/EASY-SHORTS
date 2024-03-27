@@ -1,3 +1,30 @@
+from IPython.display import HTML
+from base64 import b64encode
+import os
+import shutil
+import subprocess
+
+def play(f):
+    mp4 = open(f, 'rb').read()
+    data_url = "data:video/mp4;base64," + b64encode(mp4).decode()
+    return HTML("""
+    <video width=400 controls>
+        <source src="%s" type="video/mp4">
+    </video>
+    """ % data_url)
+
+#Install required packages
+subprocess.run(['apt', 'install', 'imagemagick'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+subprocess.run(['cat', '/etc/ImageMagick-6/policy.xml', '|', 'sed', 's/none/read,write/g', '>', '/etc/ImageMagick-6/policy.xml'])
+subprocess.run(['wget', '-qO-', 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x6888550b2fc77d09', '|', 'sudo', 'tee', '/etc/apt/trusted.gpg.d/songrec.asc'])
+subprocess.run(['sudo', 'apt-add-repository', 'ppa:marin-m/songrec', '-y', '-u'])
+subprocess.run(['sudo', 'apt', 'install', 'songrec', '-y'])
+subprocess.run(['pip', 'install', 'youtube-transcript-api', 'langchain', 'langchain_openai', 'openai', 'requests', 'moviepy==2.0.0.dev2', 'imageio==2.25.1', 'pysrt==1.1.2', 'Pillow==9.5.0', 'ffmpeg-python', 'pytube', 'google-api-python-client', 'google-auth-oauthlib', 'google-auth-httplib2', 'oauth2client', 'git+https://github.com/m1guelpf/auto-subtitle.git'])
+!pip install -U g4f
+
+
+#-----------------------------------------------------------------------------------
+
 import os
 import json
 import pysrt
