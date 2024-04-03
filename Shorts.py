@@ -17,10 +17,7 @@ def play(f):
 subprocess.run(['apt', 'install', 'imagemagick'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 subprocess.run(['cat', '/etc/ImageMagick-6/policy.xml', '|', 'sed', 's/none/read,write/g', '>', '/etc/ImageMagick-6/policy.xml'])
 subprocess.run(['wget', '-qO-', 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x6888550b2fc77d09', '|', 'sudo', 'tee', '/etc/apt/trusted.gpg.d/songrec.asc'])
-subprocess.run(['sudo', 'apt-add-repository', 'ppa:marin-m/songrec', '-y', '-u'])
-subprocess.run(['sudo', 'apt', 'install', 'songrec', '-y'])
-subprocess.run(['pip', 'install', 'youtube-transcript-api', 'langchain', 'langchain_openai', 'openai', 'requests', 'moviepy==2.0.0.dev2', 'imageio==2.25.1', 'pysrt==1.1.2', 'Pillow==9.5.0', 'ffmpeg-python', 'pytube', 'google-api-python-client', 'google-auth-oauthlib', 'google-auth-httplib2', 'oauth2client', 'git+https://github.com/m1guelpf/auto-subtitle.git'])
-!pip install -U g4f
+subprocess.run(['pip', 'install', 'langchain', 'langchain_openai', 'openai', 'requests', 'moviepy==2.0.0.dev2', 'imageio==2.25.1', 'pysrt==1.1.2', 'Pillow==9.5.0', 'ffmpeg-python', 'pytube', 'google-api-python-client', 'google-auth-oauthlib', 'google-auth-httplib2', 'oauth2client', 'git+https://github.com/m1guelpf/auto-subtitle.git'])
 
 
 #-----------------------------------------------------------------------------------
@@ -62,35 +59,30 @@ def play(f):
 
 OPENAI_API_KEY = "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"  # @param {type:"string"}
 PEXELS_API_KEY = "7KygQ5mPe95mQGiO0Fds3taAlOZSuwdwsJQ12SeSaGJo6GeVaP70shik"  # @param {type:"string"}
-CLIENT_SECRETS = "KTEQMbnQXZRT3BlbkFJSoN1" # @param {type:"string"}
 
 
-#Give local folder path, local single media file or youtube link
-IMPUT = "/content/drive/MyDrive/audios"  # @param {type:"string"}
+PEXELS_API_KEY = "7KygQ5mPe95mQGiO0Fds3taAlOZSuwdwsJQ12SeSaGJo6GeVaP70shik"  # @param {type:"string"}
+os.environ["PEXELS_API_KEY"] = PEXELS_API_KEY
+#Give local folder path (with multiple audios/videos), local single media file or youtube link
+INPUT = "/content/drive/MyDrive/Tips/3 Mistakes Everyone Should Avoid!  (Part -2) ❌ #shorts_Shakeel_p0_i0.5_fr3_rms0.25_pro0.33_rmvpe_mixed/3 Mistakes Everyone Should Avoid!  (Part -2) ❌ #shorts_Shakeel_p0_i0.5_fr3_rms0.25_pro0.33_rmvpe_mixed.wav"  # @param {type:"string"}
 #Select the language of input media or leave it as auto for auto detection
 Language = "auto"  # @param ["auto", "English", "Urdu", "German"]
-#select the desire video formate
+#select the desire video format by default = Landscape
 FORMAT = "Landscape (Youtube 16:9)"  # @param ["Landscape (Youtube 16:9)", "Portrait  (Tiktok 9:16)", "Square (Instagram 10:10)"]
 #This is optional either put direct download link of background music or leave empty
 MUSIC = "" # @param {type:"string"}
 #This is optional you can leave empty if you do not want to use any Watermark to the video
 WATERMARK = "Enterprisium"  # @param {type:"string"}
-# Select the font name, font size, color, Subtitles style to be used in the video or Leave it as it is to use Default (Simple)
-FONT_STYLE = "Nimbus-Sans-Bold, 24, White, Word_Highlight" # @param {type:"string"}
-# select weather you want auto matically upload the final video to youtube directly, or upload and want to upload & schedule both or do Nothing
-UPLOAD = "Upload ONLY"  # @param ["Upload ONLY", "Upload & SCHEDULE", "NOTHING" " "]
-os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
-os.environ["PEXELS_API_KEY"] = PEXELS_API_KEY
-os.environ["CLIENT_SECRETS"] = CLIENT_SECRETS
-
+# Select the Subtitles style to be used in the video or Leave it as it is to use Default (Simple)
+SUBTITLES = "Word_Highlight"  # @param ["Word_Highlight", "Word-By-Word", "Simple", "None"]
 
 -------------------------------------------------------INPUT_PROCESSING-------------------------------------------------------------------
 
 
-# Check if INPUT_MEDIA is a folder path
-if os.path.isdir(INPUT_MEDIA):
+# Check if INPUT is a folder path
+if os.path.isdir(INPUT):
     audio_files = []
-    for root, dirs, files in os.walk(INPUT_MEDIA):
+    for root, dirs, files in os.walk(INPUT):
         for file in files:
             if file.endswith(('.mp3', '.wav', '.m4a')):
                 file_path = os.path.join(root, file)
@@ -110,7 +102,7 @@ if os.path.isdir(INPUT_MEDIA):
         duration_in_seconds = round(audio.duration)
 
         # Print the name of the voiceover file and its duration
-        print(f"Voice Generated: {os.path.basename(voice_path)} | Duration: {duration_in_seconds}s")
+        print(f"Processing: {os.path.basename(voice_path)} | Duration: {duration_in_seconds}s")
 
 
 -------------------------------------------------------CAPTIONING_TRANCRIBING-------------------------------------------------------------------
@@ -151,59 +143,6 @@ if os.path.isdir(INPUT_MEDIA):
 #
 #
 #
-
-             
-
------------------------------------------------ Word_Scroling (Instagram like)-------------------------------------------------------------------
-#
-#
-#
-#
-#
-#
-#
-#
-
------------------------------------------------Word_Highlight(Descript like)-------------------------------------------------------------------
-#
-#
-#
-#
-#
-#
-#
-#
-
------------------------------------------------Word_Highlight(Descript like)-------------------------------------------------------------------
-#
-#
-#
-#
-#
-#
-#
-#
-
------------------------------------------------Word_Highlight(Descript like)-------------------------------------------------------------------
-#
-#
-#
-#
-#
-#
-#
-#
-------------------------------------------- Rendom (Word_Highlight,Word-by-Word Word_Scroling, Default-------------------------------------------------------------------
-#
-#
-#
-#
-#
-#
-#
-#
-
-
 -------------------------------------------------------KEYWORDING-------------------------------------------------------------------
 
 
@@ -252,42 +191,7 @@ if os.path.isdir(INPUT_MEDIA):
 
         clips_titles = output.strip().split("\n")
         clips_titles
-
-
--------------------------------------------------------METADATA-------------------------------------------------------------------
-
-
-Title: [title here]
-
-Description: [description here]
-
-Tags: [tag1], [tag2], [tag3]
-
-Context:
-Imagine you are a highly skilled YouTube content creator and SEO specialist. Your goal is to create an engaging and searchable title, description and set of tags for a video based on the following transcript:
-
-{{transcript}}
-
-Instructions:
-1. Provide an attention-grabbing title for the video that is 60-80 characters long and incorporates relevant keywords. The title should pique curiosity and entice viewers to click.
-2. Write a compelling description in 1-2 paragraphs (around 300 words) that provides an overview of the video content and key takeaways. Use persuasive language and incorporate relevant keywords seamlessly.
-3. Suggest 5-10 relevant tags (single words or short phrases) that accurately describe the video topic and content. Include a mix of broad and specific keywords for improved discoverability.
-4. Ensure that the title, description and tags are engaging, informative and optimized for search visibility without compromising the creative essence of the content.
-
-Output Format:
-Title: [Proposed Video Title]
-
-Description:
-[Paragraph 1]
-
-[Paragraph 2]
-
-Tags: [tag1], [tag2], [tag3], [tag4], [tag5]
-
-
 -------------------------------------------------------PEXELS_FATCHING-------------------------------------------------------------------
-
-
         clip_counter = Counter(clips_titles)
         clips_paths = []
         selected_videos = set()
@@ -325,20 +229,7 @@ Tags: [tag1], [tag2], [tag3], [tag4], [tag5]
         for i in range(num_clips - len(clips_paths)):
 
             clips_paths.append(clips_paths[0])
-
------------------------------------------------------TRANSITIONING-------------------------------------------------------------------
-#
-#
-#
-#
-#
-#
-#
-#
-#
 -------------------------------------------------------ALINGMENT-------------------------------------------------------------------
-
-
         def resize_clip(input_video_path, duration=5, new_dimensions=(720, 1280)):
             video_clip = VideoFileClip(input_video_path)
             total_duration = video_clip.duration
@@ -389,17 +280,6 @@ Tags: [tag1], [tag2], [tag3], [tag4], [tag5]
 
         # Write the final video file
         final_clip.write_videofile(os.path.join(output_folder, f"{input_basename}.mp4"), codec="libx264", audio_codec="aac", fps=24)
-
--------------------------------------------------------TINY_SOUNDS-------------------------------------------------------------------
-#
-#
-#
-#
-#
-#
-#
-#
-#
 -------------------------------------------------------FINALISATION-------------------------------------------------------------------
 
         video = VideoFileClip(os.path.join(output_folder, f"{input_basename}.mp4"))
@@ -423,4 +303,4 @@ Tags: [tag1], [tag2], [tag3], [tag4], [tag5]
             os.remove(os.path.join(output_folder, 'music.mp3'))
         os.remove(os.path.join(output_folder, "voice.mp3"))
         os.remove(os.path.join(output_folder, f"{input_basename}.mp4"))
---------------------------------------------------------END--------------------------------------------------------------------
+#------------------------END-----------------#
