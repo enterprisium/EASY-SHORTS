@@ -1,6 +1,7 @@
-from openai import OpenAI
-client = OpenAI(api_key=OPENAI_APIKEY)
+import os
+import openai
 
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
 def gpt_entry(niche):
     ideas = []
