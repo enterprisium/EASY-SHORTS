@@ -5,14 +5,13 @@ openai.api_key = os.getenv('OPENAI_API_KEY')
 
 def gpt_entry(niche):
     ideas = []
-    completion = client.chat.completions.create(
+    completion = openai.ChatCompletion.create(
     model="gpt-3.5-turbo",
     messages=[
-        {"role": "system", "content": f"You are youtube content creator. You are making videos about {niche}"}, # here you set how gpt should act like
-        {"role": "user", "content": f"I need 5 title ideas for my youtube channel abot {niche}. Format the titles into 5 bullet points"}
+        {"role": "system", "content": f"You are a YouTube content creator. You are making videos about {niche}."}, # here you set how GPT should act like
+        {"role": "user", "content": f"I need 5 title ideas for my YouTube channel about {niche}. Format the titles into 5 bullet points."}
     ]
     )
-
 
     results = completion.choices[0].message.content.splitlines()
 
