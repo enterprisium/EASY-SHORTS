@@ -55,14 +55,7 @@ def play(f):
     </video>
     """ % data_url)
 
-# ---------Environment variables---------#
 
-OPENAI_API_KEY = "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"  # @param {type:"string"}
-PEXELS_API_KEY = "7KygQ5mPe95mQGiO0Fds3taAlOZSuwdwsJQ12SeSaGJo6GeVaP70shik"  # @param {type:"string"}
-
-
-PEXELS_API_KEY = "7KygQ5mPe95mQGiO0Fds3taAlOZSuwdwsJQ12SeSaGJo6GeVaP70shik"  # @param {type:"string"}
-os.environ["PEXELS_API_KEY"] = PEXELS_API_KEY
 #Give local folder path (with multiple audios/videos), local single media file or youtube link
 INPUT = "/content/drive/MyDrive/Tips/3 Mistakes Everyone Should Avoid!  (Part -2) ❌ #shorts_Shakeel_p0_i0.5_fr3_rms0.25_pro0.33_rmvpe_mixed/3 Mistakes Everyone Should Avoid!  (Part -2) ❌ #shorts_Shakeel_p0_i0.5_fr3_rms0.25_pro0.33_rmvpe_mixed.wav"  # @param {type:"string"}
 #Select the language of input media or leave it as auto for auto detection
