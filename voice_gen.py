@@ -1,6 +1,8 @@
+import os
 import elevenlabs
 
-elevenlabs.set_api_key(ELEVENLABSAPIKEY)
+elevenlabs_api_key = os.getenv('ELEVENLABS_API_KEY')
+elevenlabs.set_api_key(elevenlabs_api_key)
 
 def generate_voice_over(script):
     voice = elevenlabs.Voice(
