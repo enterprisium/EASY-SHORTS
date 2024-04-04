@@ -1,8 +1,10 @@
 from pexelsapi.pexels import Pexels
+import os
 import random
 import requests
 
-pexel = Pexels(PEXELSAPIKEY)
+pexels_api_key = os.getenv('PEXELS_API_KEY')
+pexel = Pexels(pexels_api_key)
 
 def download_video(url, file_name):
     response = requests.get(url, stream=True)
