@@ -1,12 +1,6 @@
-# -*- coding: utf-8 -*-
-"""Descript_like_wordhighlights_subtitles.ipynb
-
 !pip install --quiet ipython-autotime
-# Commented out IPython magic to ensure Python compatibility.
-# %load_ext autotime
 
-"""## Step1: Download video or upload the video in mp4 format that you want to convert to fancy word-level subtitles (audiogram)"""
-
+# Add/Download Video or Audio choice is your :)
 import os
 
 mp4videoURL = "https://github.com/ramsrigouthamg/Supertranslate.ai/raw/main/Descript_like_wordhighlights_subtitles/Intro.mp4"
@@ -16,52 +10,43 @@ print (videofilename)
 import urllib.request
 urllib.request.urlretrieve(mp4videoURL, videofilename)
 
-"""## Step2: Extract audio (mp3) from the video file"""
+# Extract audio (mp3) from the video file (OPTIONAL)
 
 !pip install ffmpeg-python==0.2.0
 
 import ffmpeg
 
 audiofilename = videofilename.replace(".mp4",'.mp3')
-
 # Create the ffmpeg input stream
 input_stream = ffmpeg.input(videofilename)
-
 # Extract the audio stream from the input stream
 audio = input_stream.audio
-
 # Save the audio stream as an MP3 file
 output_stream = ffmpeg.output(audio, audiofilename)
-
 # Overwrite output file if it already exists
 output_stream = ffmpeg.overwrite_output(output_stream)
 
 ffmpeg.run(output_stream)
-
 print (audiofilename)
-
 from IPython.display import Audio
-
 Audio(audiofilename)
 
-"""## Step3: Get word-level transcription (speech-to-text) from audio using OpenAI's Whisper"""
-
+# Get transcription Using OpenAI's Whisper
 !pip install git+https://github.com/openai/whisper.git@248b6cb124225dd263bb9bd32d060b6517e067f8
 
 import whisper
-                                          #might take some time (approx 3- 5min depending on audio length)
+                                  
 model = whisper.load_model("medium")
 result = model.transcribe(audiofilename,word_timestamps=True)
 print(result)
 
 # total text
 print (result['text'])
-
 # each subtitle segment
 for each in result['segments']:
   print (each)
-
 wordlevel_info = []
+
 
 for each in result['segments']:
   words = each['words']
@@ -71,26 +56,16 @@ for each in result['segments']:
 
 wordlevel_info
 
-"""## Step4: Store word-level timestamps into JSON file"""
-
+# Store word-level timestamps into JSON file
 import json
 with open('data.json', 'w') as f:
     json.dump(wordlevel_info, f,indent=4)
 
-"""## Step5: Correct and save JSON file if there are transcription errors or if you need to merge any words into phrases. Load the new edited JSON file with new word-level timestamps"""
-
-import json
-
-with open('data.json', 'r') as f:
-    wordlevel_info_modified = json.load(f)
-
-wordlevel_info_modified
-
-"""## Step6: Convert word-level timestamps JSON to line-level timestamps JSON. We want to display one line at a time and highlight words in it as they are spoken so we do this transformation."""
+# Convert word-level timestamps JSON to line-level timestamps JSON. We want to display one line at a time and highlight words in it as they are spoken so we do this transformation
 
 def split_text_into_lines(data):
 
-    MaxChars = 80
+    MaxChars = 30
     #maxduration in seconds
     MaxDuration = 3.0
     #Split if nothing is spoken (gap) for these many seconds
@@ -158,20 +133,19 @@ for line in linelevel_subtitles:
   json_str = json.dumps(line, indent=4)
   print(json_str)
 
-"""## Step7: Use Moviepy to create an audiogram with word-level highlights as they are spoken"""
+# Moviepy to create an audiogram with Dynamic Subtitles
 
 !pip install moviepy==2.0.0.dev2
 !pip install imageio==2.25.1
-
 !apt install imagemagick
-
 !cat /etc/ImageMagick-6/policy.xml | sed 's/none/read,write/g'> /etc/ImageMagick-6/policy.xml
+
 
 from moviepy.editor import TextClip, CompositeVideoClip, ColorClip
 import numpy as np
 
 
-def create_caption(textJSON, framesize,font = "Helvetica-Bold",fontsize=80, color='white', bgcolor='blue'):
+def create_caption(textJSON, framesize,font = "Helvetica-Bold",fontsize=50, color='white', bgcolor='pink'):
     wordcount = len(textJSON['textcontents'])
     full_duration = textJSON['end']-textJSON['start']
 
@@ -273,15 +247,3 @@ final_video = final_video.set_audio(input_video.audio)
 
 # Save the final clip as a video file with the audio included
 final_video.write_videofile("output.mp4", fps=24, codec="libx264", audio_codec="aac")
-
-"""## Step8: Visualize the final Descript like audiogram video"""
-
-from IPython.display import HTML
-from base64 import b64encode
-mp4 = open("output.mp4",'rb').read()
-data_url = "data:video/mp4;base64," + b64encode(mp4).decode()
-HTML("""
-<video width=400 controls>
-      <source src="%s" type="video/mp4">
-</video>
-""" % data_url)
