@@ -1,9 +1,9 @@
 from pexelsapi.pexels import Pexels
-import os
 import random
 import requests
 
-pexels_api_key = os.getenv('PEXELS_API_KEY')
+# Use the API key directly in the file
+pexels_api_key = "7KygQ5mPe95mQGiO0Fds3taAlOZSuwdwsJQ12SeSaGJo6GeVaP70shik"
 pexel = Pexels(pexels_api_key)
 
 def download_video(url, file_name):
@@ -18,13 +18,18 @@ def download_video(url, file_name):
     else:
         print(f"Failed to download video. Status code: {response.status_code}")
 
-
 def download_videos(number, niche):
     id_videos = []
     search_videos = pexel.search_videos(query=niche, orientation='portrait', size='', color='', locale='', page=1, per_page=15)
     
-    for _ in range(number):
-        random_index = random.randrange(0, 15)
+    if 'videos' not in search_videos or not search_videos['videos']:
+        print(f"No videos found for the niche '{niche}'. Please try a different niche.")
+        return id_videos
+
+    available_videos = len(search_videos['videos'])
+    
+    for _ in range(min(number, available_videos)):
+        random_index = random.randrange(0, available_videos)
         video = search_videos['videos'][random_index]
         video_id = video.get('id')
 
