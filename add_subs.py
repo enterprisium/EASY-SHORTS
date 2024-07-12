@@ -150,65 +150,57 @@ def create_caption(textJSON, framesize,font = "Roboto-Bold",color='white', highl
 
 
 def add_subtitles(voice_over):
+    model_size = "small"
+    model = WhisperModel(model_size)
 
-  model_size = "small"
-  model = WhisperModel(model_size)
+    segments, info = model.transcribe(voice_over, word_timestamps=True)
+    segments = list(segments)  # The transcription will actually run here.
+    for segment in segments:
+        for word in segment.words:
+            print("[%.2fs -> %.2fs] %s" % (word.start, word.end, word.word))
 
-  segments, info = model.transcribe(voice_over, word_timestamps=True)
-  segments = list(segments)  # The transcription will actually run here.
-  for segment in segments:
-      for word in segment.words:
-          print("[%.2fs -> %.2fs] %s" % (word.start, word.end, word.word))
+    wordlevel_info = []
 
-  wordlevel_info = []
+    for segment in segments:
+        for word in segment.words:
+            wordlevel_info.append({'word':word.word,'start':word.start,'end':word.end})
 
-  for segment in segments:
-      for word in segment.words:
-          wordlevel_info.append({'word':word.word,'start':word.start,'end':word.end})
+    with open('data.json', 'w') as f:
+        json.dump(wordlevel_info, f, indent=4)
 
+    with open('data.json', 'r') as f:
+        wordlevel_info = json.load(f)
 
-  with open('data.json', 'w') as f:
-      json.dump(wordlevel_info, f, indent=4)
+    linelevel_subtitles = split_text_into_lines(wordlevel_info)
 
-  with open('data.json', 'r') as f:
-    wordlevel_info = json.load(f)
-
-  linelevel_subtitles = split_text_into_lines(wordlevel_info)
-
-  for line in linelevel_subtitles:
-    json_str = json.dumps(line, indent=4)
     input_video = VideoFileClip('final.mp4')
-  frame_size = input_video.size
+    frame_size = input_video.size
 
-  all_linelevel_splits=[]
+    all_linelevel_splits = []
 
-  for line in linelevel_subtitles:
-    out_clips,positions = create_caption(line,frame_size)
+    for line in linelevel_subtitles:
+        out_clips, positions = create_caption(line, frame_size)
 
-    max_width = 0
-    max_height = 0
+        max_width = 0
+        max_height = 0
 
-    for position in positions:
-      x_pos, y_pos = position['x_pos'],position['y_pos']
-      width, height = position['width'],position['height']
+        for position in positions:
+            x_pos, y_pos = position['x_pos'], position['y_pos']
+            width, height = position['width'], position['height']
 
-      max_width = max(max_width, x_pos + width)
-      max_height = max(max_height, y_pos + height)
+            max_width = max(max_width, x_pos + width)
+            max_height = max(max_height, y_pos + height)
 
-    centered_clips = [each.set_position('center') for each in out_clips]
+        # Apply set_position to each clip individually
+        centered_clips = [clip.set_position("center") for clip in out_clips]
 
-    
-    out_clips = out_clips.set_position("center")
+        all_linelevel_splits.extend(centered_clips)
 
+    input_video_duration = input_video.duration
 
-    all_linelevel_splits.append(out_clips)
+    final_video = CompositeVideoClip([input_video] + all_linelevel_splits)
 
-  input_video_duration = input_video.duration
+    final_video = final_video.set_audio(input_video.audio)
 
-
-  final_video = CompositeVideoClip([input_video] + all_linelevel_splits)
-
-  final_video = final_video.set_audio(input_video.audio)
-
-  final_video.write_videofile("output.mp4")
-  os.remove('voice_over.mp3')
+    final_video.write_videofile("output.mp4")
+    os.remove('voice_over.mp3')
