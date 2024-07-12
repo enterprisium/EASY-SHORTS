@@ -3,7 +3,7 @@ from elevenlabs import save
 from elevenlabs.client import ElevenLabs
 
 # Set the API key as an environment variable
-os.environ["ELEVENLABS_API_KEY"] = "sk_45fe7923b58a44371ab2667045e1e9b50e40b8250d4b2b24"
+os.environ["ELEVENLABS_API_KEY"] = "45fe7923b58a44371ab2667045e1e9b50e40b8250d4b2b24"
 
 # Initialize the ElevenLabs client
 client = ElevenLabs(api_key=os.environ["ELEVENLABS_API_KEY"])
