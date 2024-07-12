@@ -1,20 +1,24 @@
 import os
-import elevenlabs
+from elevenlabs import save
+from elevenlabs.client import ElevenLabs
 
 # Set the API key as an environment variable
-os.environ["ELEVENLABS_API_KEY"] = "sk_45fe7923b58a44371ab2667045e1e9b50e40b8250d4b2b24" 
+os.environ["ELEVENLABS_API_KEY"] = "sk_45fe7923b58a44371ab2667045e1e9b50e40b8250d4b2b24"
 
-# Now you can use the ElevenLabs library
+# Initialize the ElevenLabs client
+client = ElevenLabs(api_key=os.environ["ELEVENLABS_API_KEY"])
+
 def generate_voice_over(script):
-    voice = elevenlabs.Voice(
-        voice_id = "ErXwobaYiN019PkySvjV",
-        settings= elevenlabs.VoiceSettings(
-            stability=0.5,
-            similarity_boost=0.75
-        )
+    # Define the voice and model settings
+    VOICE = "Antoni"  # This is the voice ID for "Antoni"
+    MODEL = "eleven_multilingual_v2"
+
+    # Generate the audio
+    audio = client.generate(
+        text=script,
+        voice=VOICE,
+        model=MODEL
     )
 
-    voice_over = elevenlabs.generate(
-        text=script, 
-        voice=voice)
-    elevenlabs.save(voice_over, "voice_over.mp3")
+    # Save the generated audio
+    save(audio, "voice_over.mp3")
