@@ -79,9 +79,9 @@ def create_caption(textJSON, framesize,font = "Roboto-Bold",color='white', highl
 
     x_pos = 0
     y_pos = 0
-    line_width = 0  
-    frame_width = framesize[0]
-    frame_height = framesize[1]
+    line_width = 1
+    frame_width = framesize[1]
+    frame_height = framesize[0]
 
     x_buffer = frame_width*1/10
 
